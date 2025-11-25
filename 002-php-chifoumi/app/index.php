@@ -5,8 +5,9 @@ session_start(); // Nécessaire pour conserver les compteurs entre les coups
 if (!isset($_SESSION['win']))  $_SESSION['win'] = 0;
 if (!isset($_SESSION['lose'])) $_SESSION['lose'] = 0;
 if (!isset($_SESSION['draw'])) $_SESSION['draw'] = 0;
+if (!isset($_SESSION['total'])) $_SESSION['total'] = 0;
 
-$Choices = ['Pierre', 'Feuille', 'Ciseaux'];
+$Choices = ['Pierre', 'Feuille', 'Ciseaux', 'Lézard', 'Spock'];
 $Result = '';
 $Player = '';
 $Computer = '';
@@ -18,22 +19,32 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["choice"])) {
     if ($Player === $Computer) {
         $Result = 'Egalité !!';
         $_SESSION['draw']++;
+        $_SESSION['total']++;
     } elseif (
         ($Player === "Pierre" && $Computer === "Ciseaux") ||
+        ($Player === "Pierre" && $Computer === "Lézard") ||
         ($Player === "Feuille" && $Computer === "Pierre") ||
-        ($Player === "Ciseaux" && $Computer === "Feuille")
+        ($Player === "Feuille" && $Computer === "Spock") ||
+        ($Player === "Ciseaux" && $Computer === "Feuille") ||
+        ($Player === "Ciseaux" && $Computer === "Lézard") ||
+        ($Player === "Lézard" && $Computer === "Feuille") ||
+        ($Player === "Lézard" && $Computer === "Spock") ||
+        ($Player === "Spock" && $Computer === "Pierre") ||
+        ($Player === "Spock" && $Computer === "Ciseaux")
     ) {
         $Result = 'Gagné !!';
         $_SESSION['win']++;
+        $_SESSION['total']++;
     } else {
         $Result = 'Perdu !!';
         $_SESSION['lose']++;
+        $_SESSION['total']++;
     }
 }
 
 // Reset du score si demandé
 if (isset($_POST["reset"])) {
-    $_SESSION['win'] = $_SESSION['lose'] = $_SESSION['draw'] = 0;
+    $_SESSION['win'] = $_SESSION['lose'] = $_SESSION['draw'] = $_SESSION['total'] = 0;
 }
 
 $html = <<< HTML
@@ -47,7 +58,7 @@ body {
     font-family: Arial, sans-serif;
     text-align: center;
     margin-top: 50px;
-    background: #f2f2f2;
+    background: grey;
 }
 h1 { font-size: 2.5rem; margin-bottom: 30px; }
 form button {
@@ -90,15 +101,18 @@ form button:hover { transform: scale(1.1); background: #ddd; }
     <button type="submit" name="choice" value="Pierre">Pierre</button>
     <button type="submit" name="choice" value="Feuille">Feuille</button>
     <button type="submit" name="choice" value="Ciseaux">Ciseaux</button>
+    <button type="submit" name="choice" value="Lézard">Lézard</button>
+    <button type="submit" name="choice" value="Spock">Spock</button>
 </form>
 
 <div class="score">
+    <p>Total partie : <strong>{$_SESSION['total']}</strong></p>
     <p>Victoires : <strong>{$_SESSION['win']}</strong></p>
     <p>Défaites : <strong>{$_SESSION['lose']}</strong></p>
     <p>Égalités : <strong>{$_SESSION['draw']}</strong></p>
-
+    
     <form method="POST">
-        <button type="submit" name="reset" style="background:#ffb3b3;">Reset Score</button>
+        <button type="submit" name="reset" style="background:#ffb3b3;">Reinitialiser Le Score</button>
     </form>
 </div>
 HTML;
