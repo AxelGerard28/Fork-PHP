@@ -6,7 +6,7 @@ function generateSelectOptions(int $selected = 12): string
     $options = range(8, 42);
 
     foreach ($options as $value) {
-        $attribute = ((int)$value === (int)$selected) ? "selected" : "";
+        $attribute = ((int)$value === $selected) ? "selected" : "";
         $html .= "<option value=\"$value\" $attribute>$value</option>";
     }
 
@@ -36,7 +36,7 @@ function generatePassword($Length, $UseLower, $UseUpper, $UseNumber, $UseSymbols
 }
 
 $generatedPassword = "";
-$selectedLength = 12; // valeur par défaut
+$selectedLength = 12;
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $selectedLength = intval($_POST["length"]);
@@ -119,12 +119,6 @@ $html = <<<HTML
         background: #0056b3;
     }
 </style>
-
-
-
-
-
-
 
 </head>
 <body>
